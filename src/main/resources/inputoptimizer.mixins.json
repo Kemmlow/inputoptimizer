@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "dev.kemmlow.inputoptimizer.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MixinMinecraft",
+    "MixinMinecraftInvoker",
+    "MixinKeyboardHandler",
+    "MixinKeyboardFlushFromRaw",
+    "MixinMouseHandler",
+    "MixinMouseImmediate",
+    "MixinMouseSetup",
+    "MixinMouseAccumulated",
+    "MixinMouseSmoothingBypass",
+    "MixinFrameAlignedInput",
+    "MixinAndroidFlush"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "inputoptimizer",
+  "version": "${version}",
+  "name": "Kemmlow's Input Optimizer",
+  "description": "Near-zero client input latency.",
+  "authors": [
+    "Kemmlow"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/inputoptimizer/",
+    "sources": "https://github.com/Kemmlow/inputoptimizer/",
+    "issues": "https://github.com/Kemmlow/inputoptimizer/issues/"
+  },
+  "license": "LGPL-3.0-only",
+  "icon": "assets/inputoptimizer/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.kemmlow.inputoptimizer.Main"
+    ]
+  },
+  "mixins": [
+    "inputoptimizer.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "breaks": {
+    "rawinputbuffer": "*",
+    "ixeris": "*"
+  }
+}

@@ -1,0 +1,106 @@
+package dev.kemmlow.inputoptimizer.rawinput;
+
+import com.mojang.blaze3d.platform.Window;
+import dev.kemmlow.inputoptimizer.Main;
+import dev.kemmlow.inputoptimizer.rawinput.platform.AndroidInputOptimizer;
+import dev.kemmlow.inputoptimizer.rawinput.platform.LinuxRawInputEngine;
+import dev.kemmlow.inputoptimizer.rawinput.platform.MacOSRawInputEngine;
+import dev.kemmlow.inputoptimizer.rawinput.platform.WindowsRawInputEngine;
+import net.minecraft.client.Minecraft;
+
+public final class RawInputManager {
+    private static RawInputEngine engine;
+    private static boolean initialized = false;
+
+    private RawInputManager() {}
+
+    public static boolean initialize(long windowHandle) {
+        if (initialized) return engine != null && engine.isRunning();
+        initialized = true;
+
+        String os = System.getProperty("os.name", "").toLowerCase();
+        String vendor = System.getProperty("java.vendor", "").toLowerCase();
+        String vmName = System.getProperty("java.vm.name", "").toLowerCase();
+
+        boolean isAndroid = AndroidInputOptimizer.isAndroidPlatform();
+
+        if (isAndroid) {
+            engine = new AndroidInputOptimizer();
+        } else if (os.contains("win")) {
+            engine = new WindowsRawInputEngine();
+        } else if (os.contains("linux")) {
+            engine = new LinuxRawInputEngine();
+        } else if (os.contains("mac")) {
+            engine = new MacOSRawInputEngine();
+        } else {
+            Main.LOGGER.warn("[Input Optimizer] Unsupported platform: os={} vendor={} vm={}", os, vendor, vmName);
+            return false;
+        }
+
+        boolean success = engine.initialize(windowHandle);
+        if (success) {
+            Main.LOGGER.info("[Input Optimizer] Raw input initialized: {}", engine.platformName());
+        } else {
+            Main.LOGGER.warn("[Input Optimizer] Failed to initialize raw input: {}", engine.platformName());
+            engine = null;
+        }
+        return success;
+    }
+
+    public static boolean isActive() {
+        return engine != null && engine.isRunning();
+    }
+
+    public static RawInputEngine getEngine() {
+        return engine;
+    }
+
+    public static void setFocused(boolean focused) {
+        if (engine != null) engine.setFocused(focused);
+    }
+
+    public static void setGameFocused(boolean gameFocused) {
+        if (engine != null) engine.setGameFocused(gameFocused);
+    }
+
+    public static double pollDeltaX() {
+        return engine != null ? engine.pollDeltaX() : 0.0;
+    }
+
+    public static double pollDeltaY() {
+        return engine != null ? engine.pollDeltaY() : 0.0;
+    }
+
+    public static void resetDeltas() {
+        if (engine != null) engine.resetDeltas();
+    }
+
+    public static boolean isAndroid() {
+        return engine instanceof AndroidInputOptimizer;
+    }
+
+    public static void tick() {
+        if (engine == null) return;
+        if (isAndroid()) return;
+        Minecraft client = Minecraft.getInstance();
+        engine.setFocused(client.isWindowActive());
+        engine.setGameFocused(client.screen == null);
+
+        if (engine instanceof WindowsRawInputEngine winEngine) {
+            Window window = client.getWindow();
+            if (window != null) {
+                winEngine.updateCenter(
+                    window.getX() + (window.getScreenWidth() / 2),
+                    window.getY() + (window.getScreenHeight() / 2)
+                );
+            }
+        }
+    }
+
+    public static void shutdown() {
+        if (engine != null) {
+            engine.shutdown();
+            engine = null;
+        }
+    }
+}

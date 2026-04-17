@@ -1,0 +1,92 @@
+package dev.kemmlow.inputoptimizer.rawinput.platform;
+
+public final class LinuxKeyToGlfw {
+    private LinuxKeyToGlfw() {}
+
+    public static int convert(int linuxKey) {
+        return switch (linuxKey) {
+            case 30 -> 65;
+            case 48 -> 66;
+            case 46 -> 67;
+            case 32 -> 68;
+            case 18 -> 69;
+            case 33 -> 70;
+            case 34 -> 71;
+            case 35 -> 72;
+            case 23 -> 73;
+            case 36 -> 74;
+            case 37 -> 75;
+            case 38 -> 76;
+            case 50 -> 77;
+            case 49 -> 78;
+            case 24 -> 79;
+            case 25 -> 80;
+            case 16 -> 81;
+            case 19 -> 82;
+            case 31 -> 83;
+            case 20 -> 84;
+            case 22 -> 85;
+            case 47 -> 86;
+            case 17 -> 87;
+            case 45 -> 88;
+            case 21 -> 89;
+            case 44 -> 90;
+            case 11 -> 48;
+            case 2 -> 49;
+            case 3 -> 50;
+            case 4 -> 51;
+            case 5 -> 52;
+            case 6 -> 53;
+            case 7 -> 54;
+            case 8 -> 55;
+            case 9 -> 56;
+            case 10 -> 57;
+            case 57 -> 32;
+            case 28 -> 257;
+            case 1 -> 256;
+            case 14 -> 259;
+            case 15 -> 258;
+            case 42 -> 340;
+            case 54 -> 344;
+            case 29 -> 341;
+            case 97 -> 345;
+            case 56 -> 342;
+            case 100 -> 346;
+            case 58 -> 280;
+            case 105 -> 263;
+            case 103 -> 265;
+            case 106 -> 262;
+            case 108 -> 264;
+            case 110 -> 260;
+            case 111 -> 261;
+            case 102 -> 268;
+            case 107 -> 269;
+            case 104 -> 266;
+            case 109 -> 267;
+            case 59 -> 290;
+            case 60 -> 291;
+            case 61 -> 292;
+            case 62 -> 293;
+            case 63 -> 294;
+            case 64 -> 295;
+            case 65 -> 296;
+            case 66 -> 297;
+            case 67 -> 298;
+            case 68 -> 299;
+            case 87 -> 300;
+            case 88 -> 301;
+            case 13 -> 61;
+            case 12 -> 45;
+            case 26 -> 91;
+            case 27 -> 93;
+            case 43 -> 92;
+            case 39 -> 59;
+            case 40 -> 39;
+            case 51 -> 44;
+            case 52 -> 46;
+            case 53 -> 47;
+            case 41 -> 96;
+            default -> -1;
+        };
+    }
+}

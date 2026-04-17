@@ -1,0 +1,94 @@
+package dev.kemmlow.inputoptimizer.rawinput.platform;
+
+public final class MacOSKeyToGlfw {
+    private MacOSKeyToGlfw() {}
+
+    public static int convert(int macKey) {
+        return switch (macKey) {
+            case 0x00 -> 65;
+            case 0x0B -> 66;
+            case 0x08 -> 67;
+            case 0x02 -> 68;
+            case 0x0E -> 69;
+            case 0x03 -> 70;
+            case 0x05 -> 71;
+            case 0x04 -> 72;
+            case 0x22 -> 73;
+            case 0x26 -> 74;
+            case 0x28 -> 75;
+            case 0x25 -> 76;
+            case 0x2E -> 77;
+            case 0x2D -> 78;
+            case 0x1F -> 79;
+            case 0x23 -> 80;
+            case 0x0C -> 81;
+            case 0x0F -> 82;
+            case 0x01 -> 83;
+            case 0x11 -> 84;
+            case 0x20 -> 85;
+            case 0x09 -> 86;
+            case 0x0D -> 87;
+            case 0x07 -> 88;
+            case 0x10 -> 89;
+            case 0x06 -> 90;
+            case 0x1D -> 48;
+            case 0x12 -> 49;
+            case 0x13 -> 50;
+            case 0x14 -> 51;
+            case 0x15 -> 52;
+            case 0x17 -> 53;
+            case 0x16 -> 54;
+            case 0x1A -> 55;
+            case 0x1C -> 56;
+            case 0x19 -> 57;
+            case 0x31 -> 32;
+            case 0x24 -> 257;
+            case 0x35 -> 256;
+            case 0x33 -> 259;
+            case 0x30 -> 258;
+            case 0x38 -> 340;
+            case 0x3C -> 344;
+            case 0x3B -> 341;
+            case 0x3E -> 345;
+            case 0x3A -> 342;
+            case 0x3D -> 346;
+            case 0x37 -> 343;
+            case 0x36 -> 347;
+            case 0x39 -> 280;
+            case 0x7B -> 263;
+            case 0x7E -> 265;
+            case 0x7C -> 262;
+            case 0x7D -> 264;
+            case 0x72 -> 260;
+            case 0x75 -> 261;
+            case 0x73 -> 268;
+            case 0x77 -> 269;
+            case 0x74 -> 266;
+            case 0x79 -> 267;
+            case 0x7A -> 290;
+            case 0x78 -> 291;
+            case 0x63 -> 292;
+            case 0x76 -> 293;
+            case 0x60 -> 294;
+            case 0x61 -> 295;
+            case 0x62 -> 296;
+            case 0x64 -> 297;
+            case 0x65 -> 298;
+            case 0x6D -> 299;
+            case 0x67 -> 300;
+            case 0x6F -> 301;
+            case 0x18 -> 61;
+            case 0x1B -> 45;
+            case 0x21 -> 91;
+            case 0x1E -> 93;
+            case 0x2A -> 92;
+            case 0x29 -> 59;
+            case 0x27 -> 39;
+            case 0x2B -> 44;
+            case 0x2F -> 46;
+            case 0x2C -> 47;
+            case 0x32 -> 96;
+            default -> -1;
+        };
+    }
+}
