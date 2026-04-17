@@ -23,7 +23,7 @@ public abstract class MixinMouseImmediate {
     @Inject(method = "onMove", at = @At("TAIL"))
     private void immediateMouseProcess(long window, double x, double y, CallbackInfo ci) {
         if (Main.externalRawInputPresent) return;
-        if (RawInputManager.isActive() && !RawInputManager.isAndroid()) return;
+        if (RawInputManager.isActive()) return;
         if (this.minecraft.screen != null) return;
         if (!this.minecraft.mouseHandler.isMouseGrabbed()) return;
         this.turnPlayer(0.0);

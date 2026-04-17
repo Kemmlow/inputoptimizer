@@ -2,7 +2,6 @@ package dev.kemmlow.inputoptimizer.rawinput;
 
 import com.mojang.blaze3d.platform.Window;
 import dev.kemmlow.inputoptimizer.Main;
-import dev.kemmlow.inputoptimizer.rawinput.platform.AndroidInputOptimizer;
 import dev.kemmlow.inputoptimizer.rawinput.platform.LinuxRawInputEngine;
 import dev.kemmlow.inputoptimizer.rawinput.platform.MacOSRawInputEngine;
 import dev.kemmlow.inputoptimizer.rawinput.platform.WindowsRawInputEngine;
@@ -19,21 +18,15 @@ public final class RawInputManager {
         initialized = true;
 
         String os = System.getProperty("os.name", "").toLowerCase();
-        String vendor = System.getProperty("java.vendor", "").toLowerCase();
-        String vmName = System.getProperty("java.vm.name", "").toLowerCase();
 
-        boolean isAndroid = AndroidInputOptimizer.isAndroidPlatform();
-
-        if (isAndroid) {
-            engine = new AndroidInputOptimizer();
-        } else if (os.contains("win")) {
+        if (os.contains("win")) {
             engine = new WindowsRawInputEngine();
         } else if (os.contains("linux")) {
             engine = new LinuxRawInputEngine();
         } else if (os.contains("mac")) {
             engine = new MacOSRawInputEngine();
         } else {
-            Main.LOGGER.warn("[Input Optimizer] Unsupported platform: os={} vendor={} vm={}", os, vendor, vmName);
+            Main.LOGGER.warn("[Input Optimizer] Unsupported platform: os={}", os);
             return false;
         }
 
@@ -75,13 +68,8 @@ public final class RawInputManager {
         if (engine != null) engine.resetDeltas();
     }
 
-    public static boolean isAndroid() {
-        return engine instanceof AndroidInputOptimizer;
-    }
-
     public static void tick() {
         if (engine == null) return;
-        if (isAndroid()) return;
         Minecraft client = Minecraft.getInstance();
         engine.setFocused(client.isWindowActive());
         engine.setGameFocused(client.screen == null);
@@ -90,7 +78,7 @@ public final class RawInputManager {
             Window window = client.getWindow();
             if (window != null) {
                 winEngine.updateCenter(
-                    window.getX() + (window.getScreenWidth() / 2),
+                    window.getX() + (window.getScreenWidth()  / 2),
                     window.getY() + (window.getScreenHeight() / 2)
                 );
             }

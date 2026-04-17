@@ -15,14 +15,16 @@ public class MixinMinecraft {
         InputFlushManager.callbackFlushedThisFrame = false;
     }
 
-    @Inject(method = "runTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MouseHandler;handleAccumulatedMovement()V", shift = At.Shift.AFTER))
+    @Inject(method = "runTick", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/MouseHandler;handleAccumulatedMovement()V",
+            shift = At.Shift.AFTER))
     private void fallbackFlush(boolean advanceGameTime, CallbackInfo ci) {
         InputFlushManager.flush(false);
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void tickRawInput(CallbackInfo ci) {
-        if (RawInputManager.isActive() && !RawInputManager.isAndroid()) {
+        if (RawInputManager.isActive()) {
             RawInputManager.tick();
         }
     }
