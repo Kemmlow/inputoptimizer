@@ -1,40 +1,32 @@
 package dev.kemmlow.inputoptimizer.rawinput;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 public final class PollingRateOptimizer {
-    private final ConcurrentLinkedQueue<TimedDelta> deltaQueue = new ConcurrentLinkedQueue<>();
+    private final AtomicLong frameAccumX = new AtomicLong(0);
+    private final AtomicLong frameAccumY = new AtomicLong(0);
 
     public void addDelta(double dx, double dy, long timestampNanos) {
-        this.deltaQueue.add(new TimedDelta(dx, dy, timestampNanos));
+        addAtomic(this.frameAccumX, dx);
+        addAtomic(this.frameAccumY, dy);
     }
 
     public double[] consumeWeighted(long frameTimeNanos) {
-        double totalX = 0.0;
-        double totalY = 0.0;
-        double totalWeight = 0.0;
-        long now = System.nanoTime();
-
-        TimedDelta delta;
-        while ((delta = this.deltaQueue.poll()) != null) {
-            long age = now - delta.timestamp;
-            double weight = 1.0;
-            if (frameTimeNanos > 0 && age < frameTimeNanos) {
-                weight = 1.0 + ((double) (frameTimeNanos - age) / frameTimeNanos);
-            }
-            totalX += delta.dx * weight;
-            totalY += delta.dy * weight;
-            totalWeight += weight;
-        }
-
-        if (totalWeight == 0.0) return new double[]{0.0, 0.0};
-        double scale = Math.max(totalWeight / 2.0, 1.0);
-        return new double[]{totalX / scale, totalY / scale};
+        double x = Double.longBitsToDouble(this.frameAccumX.getAndSet(0));
+        double y = Double.longBitsToDouble(this.frameAccumY.getAndSet(0));
+        return new double[]{x, y};
     }
 
     public void clear() {
-        this.deltaQueue.clear();
+        this.frameAccumX.set(0);
+        this.frameAccumY.set(0);
     }
 
-    private record TimedDelta(double dx, double dy, long timestamp) {}
+    private static void addAtomic(AtomicLong bits, double value) {
+        long prev, next;
+        do {
+            prev = bits.get();
+            next = Double.doubleToLongBits(Double.longBitsToDouble(prev) + value);
+        } while (!bits.compareAndSet(prev, next));
+    }
 }

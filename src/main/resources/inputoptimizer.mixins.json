@@ -5,15 +5,16 @@
   "client": [
     "MixinMinecraft",
     "MixinMinecraftInvoker",
-    "MixinKeyboardHandler",
-    "MixinKeyboardFlushFromRaw",
+    "MixinKeyboardHandlerInvoker",
+    "MixinMouseHandlerInvoker",
+    "MixinInputDrain",
     "MixinMouseHandler",
-    "MixinMouseImmediate",
     "MixinMouseSetup",
     "MixinMouseAccumulated",
     "MixinMouseSmoothingBypass",
     "MixinFrameAlignedInput",
-    "MixinAndroidFlush"
+    "MixinAttackGate",
+    "MixinUseGate"
   ],
   "injectors": {
     "defaultRequire": 1

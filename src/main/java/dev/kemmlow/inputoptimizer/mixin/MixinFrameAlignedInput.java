@@ -16,8 +16,7 @@ public class MixinFrameAlignedInput {
         if (!RawInputManager.isActive()) return;
         Minecraft client = Minecraft.getInstance();
         if (client.screen != null) return;
-        if (client.mouseHandler.isMouseGrabbed()) {
-            client.mouseHandler.handleAccumulatedMovement();
-        }
+        if (!client.mouseHandler.isMouseGrabbed()) return;
+        client.mouseHandler.handleAccumulatedMovement();
     }
 }

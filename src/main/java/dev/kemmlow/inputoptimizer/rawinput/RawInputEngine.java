@@ -1,54 +1,35 @@
 package dev.kemmlow.inputoptimizer.rawinput;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.DoubleAdder;
 
 public abstract class RawInputEngine {
-    protected final AtomicLong deltaXBits = new AtomicLong(0);
-    protected final AtomicLong deltaYBits = new AtomicLong(0);
+    protected final DoubleAdder deltaX = new DoubleAdder();
+    protected final DoubleAdder deltaY = new DoubleAdder();
     protected final ConcurrentLinkedQueue<RawButtonEvent> buttonQueue = new ConcurrentLinkedQueue<>();
     protected final ConcurrentLinkedQueue<RawScrollEvent> scrollQueue = new ConcurrentLinkedQueue<>();
     protected final ConcurrentLinkedQueue<RawKeyEvent> keyboardQueue = new ConcurrentLinkedQueue<>();
-    protected final PollingRateOptimizer pollingOptimizer = new PollingRateOptimizer();
     protected volatile boolean running = false;
     protected volatile boolean focused = false;
     protected volatile boolean gameFocused = false;
-    protected volatile boolean usePollingOptimizer = true;
 
     public abstract boolean initialize(long glfwWindow);
-
     public abstract void shutdown();
-
     public abstract void centerCursor();
-
     public abstract String platformName();
 
     public void accumulateDelta(double dx, double dy) {
-        if (this.usePollingOptimizer) {
-            this.pollingOptimizer.addDelta(dx, dy, System.nanoTime());
-        }
-        addAtomicDouble(this.deltaXBits, dx);
-        addAtomicDouble(this.deltaYBits, dy);
+        deltaX.add(dx);
+        deltaY.add(dy);
     }
 
-    public double pollDeltaX() {
-        return Double.longBitsToDouble(this.deltaXBits.getAndSet(0));
-    }
-
-    public double pollDeltaY() {
-        return Double.longBitsToDouble(this.deltaYBits.getAndSet(0));
-    }
-
-    public double[] pollWeightedDeltas(long frameTimeNanos) {
-        this.deltaXBits.set(0);
-        this.deltaYBits.set(0);
-        return this.pollingOptimizer.consumeWeighted(frameTimeNanos);
+    public double[] pollBothDeltas() {
+        return new double[]{deltaX.sumThenReset(), deltaY.sumThenReset()};
     }
 
     public void resetDeltas() {
-        this.deltaXBits.set(0);
-        this.deltaYBits.set(0);
-        this.pollingOptimizer.clear();
+        deltaX.reset();
+        deltaY.reset();
     }
 
     public RawButtonEvent pollButton() {
@@ -76,26 +57,12 @@ public abstract class RawInputEngine {
     public void setFocused(boolean focused) {
         this.focused = focused;
         if (!focused) {
-            this.resetDeltas();
-            this.clearEvents();
+            resetDeltas();
+            clearEvents();
         }
     }
 
     public void setGameFocused(boolean gameFocused) {
         this.gameFocused = gameFocused;
-    }
-
-    public PollingRateOptimizer getPollingOptimizer() {
-        return this.pollingOptimizer;
-    }
-
-    private static void addAtomicDouble(AtomicLong bits, double value) {
-        long prev;
-        long next;
-        do {
-            prev = bits.get();
-            double current = Double.longBitsToDouble(prev);
-            next = Double.doubleToLongBits(current + value);
-        } while (!bits.compareAndSet(prev, next));
     }
 }

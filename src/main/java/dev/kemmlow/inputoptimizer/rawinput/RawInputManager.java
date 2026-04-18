@@ -7,9 +7,19 @@ import dev.kemmlow.inputoptimizer.rawinput.platform.MacOSRawInputEngine;
 import dev.kemmlow.inputoptimizer.rawinput.platform.WindowsRawInputEngine;
 import net.minecraft.client.Minecraft;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 public final class RawInputManager {
     private static RawInputEngine engine;
     private static boolean initialized = false;
+
+    private static final Set<Integer> consumedKeys =
+        Collections.newSetFromMap(new ConcurrentHashMap<>());
+
+    private static final Set<Integer> consumedButtons =
+        Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private RawInputManager() {}
 
@@ -26,7 +36,7 @@ public final class RawInputManager {
         } else if (os.contains("mac")) {
             engine = new MacOSRawInputEngine();
         } else {
-            Main.LOGGER.warn("[Input Optimizer] Unsupported platform: os={}", os);
+            Main.LOGGER.warn("[Input Optimizer] Unsupported platform: {}", os);
             return false;
         }
 
@@ -48,37 +58,53 @@ public final class RawInputManager {
         return engine;
     }
 
+    public static void markKeyConsumed(int glfwKey) {
+        consumedKeys.add(glfwKey);
+    }
+
+    public static boolean consumeIfKeyMarked(int glfwKey) {
+        return consumedKeys.remove(glfwKey);
+    }
+
+    public static void markButtonConsumed(int button, int action) {
+        consumedButtons.add(packButtonAction(button, action));
+    }
+
+    public static boolean consumeIfButtonMarked(int button, int action) {
+        return consumedButtons.remove(packButtonAction(button, action));
+    }
+
+    private static int packButtonAction(int button, int action) {
+        return ((button & 0xFFFF) << 16) | (action & 0xFFFF);
+    }
+
+    public static double[] pollBothDeltas() {
+        return engine != null ? engine.pollBothDeltas() : new double[]{0.0, 0.0};
+    }
+
     public static void setFocused(boolean focused) {
         if (engine != null) engine.setFocused(focused);
+        if (!focused) {
+            consumedKeys.clear();
+            consumedButtons.clear();
+        }
     }
 
     public static void setGameFocused(boolean gameFocused) {
         if (engine != null) engine.setGameFocused(gameFocused);
     }
 
-    public static double pollDeltaX() {
-        return engine != null ? engine.pollDeltaX() : 0.0;
-    }
-
-    public static double pollDeltaY() {
-        return engine != null ? engine.pollDeltaY() : 0.0;
-    }
-
-    public static void resetDeltas() {
-        if (engine != null) engine.resetDeltas();
-    }
-
     public static void tick() {
         if (engine == null) return;
         Minecraft client = Minecraft.getInstance();
-        engine.setFocused(client.isWindowActive());
+        setFocused(client.isWindowActive());
         engine.setGameFocused(client.screen == null);
 
         if (engine instanceof WindowsRawInputEngine winEngine) {
             Window window = client.getWindow();
             if (window != null) {
                 winEngine.updateCenter(
-                    window.getX() + (window.getScreenWidth()  / 2),
+                    window.getX() + (window.getScreenWidth() / 2),
                     window.getY() + (window.getScreenHeight() / 2)
                 );
             }
@@ -90,5 +116,7 @@ public final class RawInputManager {
             engine.shutdown();
             engine = null;
         }
+        consumedKeys.clear();
+        consumedButtons.clear();
     }
 }

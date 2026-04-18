@@ -12,23 +12,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MouseHandler.class)
 public class MixinMouseAccumulated {
-    @Shadow
-    private double accumulatedDX;
-
-    @Shadow
-    private double accumulatedDY;
-
-    @Shadow
-    @Final
-    private Minecraft minecraft;
+    @Shadow private double accumulatedDX;
+    @Shadow private double accumulatedDY;
+    @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "handleAccumulatedMovement", at = @At("HEAD"))
-    private void injectRawDeltas(CallbackInfo ci) {
+    private void ensureNonZeroForRawPath(CallbackInfo ci) {
         if (!RawInputManager.isActive()) return;
         if (this.minecraft.screen != null) return;
-        double rawDX = RawInputManager.pollDeltaX();
-        double rawDY = RawInputManager.pollDeltaY();
-        if (Math.abs(rawDX) > 0.0) this.accumulatedDX = rawDX;
-        if (Math.abs(rawDY) > 0.0) this.accumulatedDY = rawDY;
+        if (this.accumulatedDX == 0.0 && this.accumulatedDY == 0.0) {
+            this.accumulatedDX = 0.001;
+        }
     }
 }

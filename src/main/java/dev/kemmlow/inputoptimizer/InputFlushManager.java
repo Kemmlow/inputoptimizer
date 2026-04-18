@@ -6,9 +6,10 @@ import net.minecraft.client.Minecraft;
 public final class InputFlushManager {
     private InputFlushManager() {}
 
-    public static volatile boolean callbackFlushedThisFrame = false;
+    public static volatile boolean callbackFlushedThisTick = false;
 
     public static void flush(boolean fromCallback) {
+        if (fromCallback && callbackFlushedThisTick) return;
         Minecraft client = Minecraft.getInstance();
         if (client == null) return;
         if (!client.isSameThread()) return;
@@ -16,10 +17,8 @@ public final class InputFlushManager {
         if (client.isPaused()) return;
         if (client.level == null || client.player == null) return;
         if (client.gameMode == null) return;
-        if (!fromCallback && callbackFlushedThisFrame) return;
-        if (fromCallback) {
-            callbackFlushedThisFrame = true;
-        }
+        if (!fromCallback && callbackFlushedThisTick) return;
+        if (fromCallback) callbackFlushedThisTick = true;
         ((MixinMinecraftInvoker) client).invokeHandleKeybinds();
     }
 }
