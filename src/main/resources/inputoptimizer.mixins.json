@@ -3,6 +3,7 @@
   "package": "dev.kemmlow.inputoptimizer.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
+    "MinecraftAccessor",
     "MixinMinecraft",
     "MixinMinecraftInvoker",
     "MixinKeyboardHandlerInvoker",

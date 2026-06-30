@@ -2,6 +2,7 @@ package dev.kemmlow.inputoptimizer.rawinput;
 
 import com.mojang.blaze3d.platform.Window;
 import dev.kemmlow.inputoptimizer.Main;
+import dev.kemmlow.inputoptimizer.mixin.MinecraftAccessor;
 import dev.kemmlow.inputoptimizer.rawinput.platform.LinuxRawInputEngine;
 import dev.kemmlow.inputoptimizer.rawinput.platform.MacOSRawInputEngine;
 import dev.kemmlow.inputoptimizer.rawinput.platform.WindowsRawInputEngine;
@@ -98,7 +99,7 @@ public final class RawInputManager {
         if (engine == null) return;
         Minecraft client = Minecraft.getInstance();
         setFocused(client.isWindowActive());
-        engine.setGameFocused(client.screen == null);
+        engine.setGameFocused(((MinecraftAccessor) client).getScreen() == null);
 
         if (engine instanceof WindowsRawInputEngine winEngine) {
             Window window = client.getWindow();
