@@ -7,11 +7,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Minecraft.class)
-public interface MinecraftAccessor {
-    @Accessor("gui")
-    Gui getGui();
+public abstract class MinecraftAccessor {
 
-    default Screen getScreen() {
+    @Accessor("gui")
+    public abstract Gui getGui();
+
+    public Screen getScreen() {
         return getGui().screen();
     }
 }
