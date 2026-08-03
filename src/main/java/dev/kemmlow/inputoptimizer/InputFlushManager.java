@@ -1,7 +1,7 @@
 package dev.kemmlow.inputoptimizer;
 
-import dev.kemmlow.inputoptimizer.api.IGuiAccessor;
 import dev.kemmlow.inputoptimizer.mixin.MixinMinecraftInvoker;
+import dev.kemmlow.inputoptimizer.util.ScreenHelper;
 import net.minecraft.client.Minecraft;
 
 public final class InputFlushManager {
@@ -15,7 +15,7 @@ public final class InputFlushManager {
         Minecraft client = Minecraft.getInstance();
         if (client == null) return;
         if (!client.isSameThread()) return;
-        if (((IGuiAccessor) client).screen() != null) return;
+        if (ScreenHelper.getScreen(client) != null) return;
         if (client.isPaused()) return;
         if (client.level == null || client.player == null) return;
         if (client.gameMode == null) return;
