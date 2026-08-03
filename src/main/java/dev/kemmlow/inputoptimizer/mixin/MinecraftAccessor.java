@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 
 @Mixin(Minecraft.class)
-@Implements(@Interface(iface = IGuiAccessor.class))
+@Implements(@Interface(iface = IGuiAccessor.class, prefix = ""))
 public abstract class MinecraftAccessor implements IGuiAccessor {
 
     @Accessor("gui")
