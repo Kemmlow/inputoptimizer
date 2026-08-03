@@ -6,6 +6,7 @@
     "MinecraftAccessor",
     "MixinMinecraft",
     "MixinMinecraftInvoker",
+    "MixinKeyboardHandler",
     "MixinKeyboardHandlerInvoker",
     "MixinMouseHandlerInvoker",
     "MixinInputDrain",
@@ -13,9 +14,7 @@
     "MixinMouseSetup",
     "MixinMouseAccumulated",
     "MixinMouseSmoothingBypass",
-    "MixinFrameAlignedInput",
-    "MixinAttackGate",
-    "MixinUseGate"
+    "MixinFrameAlignedInput"
   ],
   "injectors": {
     "defaultRequire": 1
