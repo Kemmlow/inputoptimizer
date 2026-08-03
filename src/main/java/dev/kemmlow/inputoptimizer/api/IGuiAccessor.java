@@ -1,7 +1,7 @@
-package dev.kemmlow.inputoptimizer.mixin;
+package dev.kemmlow.inputoptimizer.api;
 
 import net.minecraft.client.gui.screens.Screen;
 
 public interface IGuiAccessor {
-    Screen getScreen();
+    Screen screen();
 }

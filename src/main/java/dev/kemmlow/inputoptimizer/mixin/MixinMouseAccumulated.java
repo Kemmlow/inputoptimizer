@@ -1,6 +1,7 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
 import dev.kemmlow.inputoptimizer.Main;
+import dev.kemmlow.inputoptimizer.api.IGuiAccessor;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
@@ -21,7 +22,7 @@ public class MixinMouseAccumulated {
     private void fixMacDrift(CallbackInfo ci) {
         if (!Main.getConfig().isEnabled()) return;
         if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
-        if (((IGuiAccessor) this.minecraft).getScreen() != null) return;
+        if (((IGuiAccessor) this.minecraft).screen() != null) return;
         if (this.accumulatedDX == 0.0 && this.accumulatedDY == 0.0) {
             double[] raw = RawInputManager.pollBothDeltas();
             if (raw[0] == 0.0 && raw[1] == 0.0) {

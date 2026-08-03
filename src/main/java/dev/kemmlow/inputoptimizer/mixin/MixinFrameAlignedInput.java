@@ -1,6 +1,7 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
 import dev.kemmlow.inputoptimizer.Main;
+import dev.kemmlow.inputoptimizer.api.IGuiAccessor;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -16,7 +17,7 @@ public class MixinFrameAlignedInput {
     private void alignInputToFrame(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
         if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
         Minecraft client = Minecraft.getInstance();
-        if (((IGuiAccessor) client).getScreen() != null) return;
+        if (((IGuiAccessor) client).screen() != null) return;
         if (!client.mouseHandler.isMouseGrabbed()) return;
         client.mouseHandler.handleAccumulatedMovement();
     }
