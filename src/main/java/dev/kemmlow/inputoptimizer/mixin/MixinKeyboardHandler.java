@@ -1,7 +1,6 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
 import dev.kemmlow.inputoptimizer.Main;
-import dev.kemmlow.inputoptimizer.InputFlushManager;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.input.KeyEvent;
@@ -16,11 +15,5 @@ public class MixinKeyboardHandler {
     private void interceptDuplicate(long window, int action, KeyEvent input, CallbackInfo ci) {
         if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
         if (RawInputManager.consumeIfKeyMarked(input.key())) ci.cancel();
-    }
-
-    @Inject(method = "keyPress", at = @At("TAIL"))
-    private void flushOnKey(long window, int action, KeyEvent input, CallbackInfo ci) {
-        if (action == 0) return;
-        InputFlushManager.flush(true);
     }
 }
