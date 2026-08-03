@@ -1,5 +1,6 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
+import dev.kemmlow.inputoptimizer.Main;
 import dev.kemmlow.inputoptimizer.InputFlushManager;
 import dev.kemmlow.inputoptimizer.rawinput.RawButtonEvent;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinInputDrain {
     @Inject(method = "runTick", at = @At("HEAD"))
     private void ultraDrain(boolean advanceGameTime, CallbackInfo ci) {
-        if (!RawInputManager.isActive()) return;
+        if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
         Minecraft client = Minecraft.getInstance();
         boolean workDone = false;
 
