@@ -10,30 +10,23 @@ public interface MacOSCoreFoundation extends Library {
 
     MacOSCoreFoundation INSTANCE = Native.load("CoreFoundation", MacOSCoreFoundation.class);
 
-    // RunLoop
     Pointer CFRunLoopGetCurrent();
     void    CFRunLoopRun();
     void    CFRunLoopStop(Pointer runLoop);
 
-    // Dictionary
     Pointer CFDictionaryCreateMutable(Pointer allocator, int capacity,
                                       Pointer keyCallBacks, Pointer valueCallBacks);
     void    CFDictionarySetValue(Pointer dict, Pointer key, Pointer value);
 
-    // Number
     Pointer CFNumberCreate(Pointer allocator, int theType, Pointer valuePtr);
 
-    // String
     Pointer CFStringCreateWithCString(Pointer allocator, String cStr, int encoding);
 
-    // Array
     Pointer CFArrayCreate(Pointer allocator, Pointer[] values, int numValues, Pointer callBacks);
 
-    // Memory management
     void    CFRelease(Pointer obj);
     Pointer CFRetain(Pointer obj);
 
-    // ---- Constants ----
     int kCFNumberSInt32Type   = 3;
     int kCFNumberSInt64Type   = 4;
     int kCFStringEncodingUTF8 = 0x08000100;

@@ -1,7 +1,7 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
+import dev.kemmlow.inputoptimizer.Main;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
-import dev.kemmlow.inputoptimizer.mixin.MinecraftAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import org.spongepowered.asm.mixin.Final;
@@ -18,11 +18,16 @@ public class MixinMouseAccumulated {
     @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "handleAccumulatedMovement", at = @At("HEAD"))
-    private void ensureNonZeroForRawPath(CallbackInfo ci) {
-        if (!RawInputManager.isActive()) return;
+    private void fixMacDrift(CallbackInfo ci) {
+        if (!Main.getConfig().isEnabled()) return;
+        if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
         if (((MinecraftAccessor) this.minecraft).getScreen() != null) return;
         if (this.accumulatedDX == 0.0 && this.accumulatedDY == 0.0) {
-            this.accumulatedDX = 0.001;
+            double[] raw = RawInputManager.pollBothDeltas();
+            if (raw[0] == 0.0 && raw[1] == 0.0) {
+                this.accumulatedDX = 0.0;
+                this.accumulatedDY = 0.0;
+            }
         }
     }
 }

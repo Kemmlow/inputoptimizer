@@ -10,6 +10,7 @@ public final class InputFlushManager {
     public static volatile boolean callbackFlushedThisTick = false;
 
     public static void flush(boolean fromCallback) {
+        if (!Main.getConfig().isEnabled()) return;
         if (fromCallback && callbackFlushedThisTick) return;
         Minecraft client = Minecraft.getInstance();
         if (client == null) return;
