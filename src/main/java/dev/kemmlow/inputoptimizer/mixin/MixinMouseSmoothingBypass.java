@@ -1,5 +1,6 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
+import dev.kemmlow.inputoptimizer.Main;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.util.SmoothDouble;
@@ -22,7 +23,7 @@ public class MixinMouseSmoothingBypass {
 
     @Inject(method = "turnPlayer", at = @At("HEAD"))
     private void captureRawDeltas(double timeDelta, CallbackInfo ci) {
-        if (!RawInputManager.isActive()) return;
+        if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
         double[] d = RawInputManager.pollBothDeltas();
         this.cachedRawDX = d[0];
         this.cachedRawDY = d[1];

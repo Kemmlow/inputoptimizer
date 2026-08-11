@@ -1,6 +1,8 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
+import dev.kemmlow.inputoptimizer.Main;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
+import dev.kemmlow.inputoptimizer.util.ScreenHelper;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -13,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinFrameAlignedInput {
     @Inject(method = "render", at = @At("HEAD"))
     private void alignInputToFrame(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo ci) {
-        if (!RawInputManager.isActive()) return;
+        if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
         Minecraft client = Minecraft.getInstance();
-        if (client.screen != null) return;
+        if (ScreenHelper.getScreen(client) != null) return;
         if (!client.mouseHandler.isMouseGrabbed()) return;
         client.mouseHandler.handleAccumulatedMovement();
     }

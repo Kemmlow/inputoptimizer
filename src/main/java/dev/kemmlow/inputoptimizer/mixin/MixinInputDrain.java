@@ -1,6 +1,6 @@
 package dev.kemmlow.inputoptimizer.mixin;
 
-import dev.kemmlow.inputoptimizer.InputFlushManager;
+import dev.kemmlow.inputoptimizer.Main;
 import dev.kemmlow.inputoptimizer.rawinput.RawButtonEvent;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
 import dev.kemmlow.inputoptimizer.rawinput.RawKeyEvent;
@@ -15,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public class MixinInputDrain {
-    @Inject(method = "runTick", at = @At("HEAD"))
-    private void ultraDrain(boolean advanceGameTime, CallbackInfo ci) {
-        if (!RawInputManager.isActive()) return;
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void drainRawInputBeforeTick(CallbackInfo ci) {
+        if (!Main.getConfig().isEnabled() || !RawInputManager.isActive()) return;
         Minecraft client = Minecraft.getInstance();
-        boolean workDone = false;
+        if (client.getWindow() == null) return;
 
         RawKeyEvent kEvent;
         while ((kEvent = RawInputManager.getEngine().pollKey()) != null) {
@@ -29,7 +29,6 @@ public class MixinInputDrain {
                 new KeyEvent(kEvent.key, kEvent.scancode, kEvent.modifiers)
             );
             RawInputManager.markKeyConsumed(kEvent.key);
-            if (kEvent.action != 0) workDone = true;
         }
 
         RawButtonEvent bEvent;
@@ -40,7 +39,6 @@ public class MixinInputDrain {
                 bEvent.action
             );
             RawInputManager.markButtonConsumed(bEvent.button, bEvent.action);
-            if (bEvent.action != 0) workDone = true;
         }
 
         RawScrollEvent sEvent;
@@ -50,9 +48,10 @@ public class MixinInputDrain {
                 sEvent.horizontal,
                 sEvent.vertical
             );
-            workDone = true;
         }
 
-        if (workDone) InputFlushManager.flush(true);
+        if (client.mouseHandler.isMouseGrabbed()) {
+            client.mouseHandler.handleAccumulatedMovement();
+        }
     }
 }

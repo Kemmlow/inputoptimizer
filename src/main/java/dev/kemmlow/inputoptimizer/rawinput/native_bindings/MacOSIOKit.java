@@ -14,20 +14,17 @@ public interface MacOSIOKit extends Library {
     void    IOHIDManagerClose(Pointer manager, int options);
     void    IOHIDManagerScheduleWithRunLoop(Pointer manager, Pointer runLoop, Pointer mode);
 
-    // Queue API
     Pointer IOHIDQueueCreate(Pointer allocator, Pointer device, int depth, int options);
     void    IOHIDQueueStart(Pointer queue);
     void    IOHIDQueueStop(Pointer queue);
     Pointer IOHIDQueueCopyNextValue(Pointer queue);
 
-    // Value accessors
     int     IOHIDValueGetIntegerValue(Pointer value);
     Pointer IOHIDValueGetElement(Pointer value);
     Pointer IOHIDElementGetDevice(Pointer element);
     int     IOHIDElementGetUsagePage(Pointer element);
     int     IOHIDElementGetUsage(Pointer element);
 
-    // Callback registration
     void IOHIDManagerRegisterInputValueCallback(Pointer manager, HIDValueCallback callback, Pointer context);
 
     interface HIDValueCallback extends Callback {
