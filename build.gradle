@@ -7,6 +7,11 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/releases"
+    }
+
     exclusiveContent {
         forRepository {
             maven {
@@ -31,6 +36,9 @@ dependencies {
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	implementation "maven.modrinth:mOgUt4GM:njXb639R"
+
+	compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
 }
 
