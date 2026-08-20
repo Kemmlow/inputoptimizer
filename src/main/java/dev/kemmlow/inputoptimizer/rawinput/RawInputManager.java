@@ -95,8 +95,19 @@ public final class RawInputManager {
         if (engine != null) engine.setGameFocused(gameFocused);
     }
 
+    // Drops queued raw events so nothing stale is replayed once the mod is enabled again.
+    public static void clearPendingInput() {
+        if (engine != null) {
+            engine.clearEvents();
+            engine.resetDeltas();
+        }
+        consumedKeys.clear();
+        consumedButtons.clear();
+    }
+
     public static void tick() {
         if (engine == null) return;
+        if (!Main.getConfig().isEnabled()) clearPendingInput();
         Minecraft client = Minecraft.getInstance();
         setFocused(client.isWindowActive());
         engine.setGameFocused(ScreenHelper.getScreen(client) == null);
