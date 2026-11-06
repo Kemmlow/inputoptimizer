@@ -5,9 +5,11 @@ import dev.kemmlow.inputoptimizer.rawinput.RawButtonEvent;
 import dev.kemmlow.inputoptimizer.rawinput.RawInputManager;
 import dev.kemmlow.inputoptimizer.rawinput.RawKeyEvent;
 import dev.kemmlow.inputoptimizer.rawinput.RawScrollEvent;
+import dev.kemmlow.inputoptimizer.rawinput.platform.SdlInputCodes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonInfo;
+import org.lwjgl.sdl.SDLKeyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -23,22 +25,26 @@ public class MixinInputDrain {
 
         RawKeyEvent kEvent;
         while ((kEvent = RawInputManager.getEngine().pollKey()) != null) {
+            int scancode = SdlInputCodes.scancodeFromGlfw(kEvent.key);
+            if (scancode < 0) continue;
+            int keycode = SDLKeyboard.SDL_GetKeyFromScancode(scancode, (short) 0, false);
             ((MixinKeyboardHandlerInvoker) client.keyboardHandler).invokeKeyPress(
                 client.getWindow().handle(),
                 kEvent.action,
-                new KeyEvent(kEvent.key, kEvent.scancode, kEvent.modifiers)
+                new KeyEvent(scancode, keycode, kEvent.modifiers)
             );
-            RawInputManager.markKeyConsumed(kEvent.key);
+            RawInputManager.markKeyConsumed(scancode);
         }
 
         RawButtonEvent bEvent;
         while ((bEvent = RawInputManager.getEngine().pollButton()) != null) {
+            int button = SdlInputCodes.mouseButtonFromGlfw(bEvent.button);
             ((MixinMouseHandlerInvoker) client.mouseHandler).invokeOnButton(
                 client.getWindow().handle(),
-                new MouseButtonInfo(bEvent.button, bEvent.modifiers),
+                new MouseButtonInfo(button, bEvent.modifiers),
                 bEvent.action
             );
-            RawInputManager.markButtonConsumed(bEvent.button, bEvent.action);
+            RawInputManager.markButtonConsumed(button, bEvent.action);
         }
 
         RawScrollEvent sEvent;
